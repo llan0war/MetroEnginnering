@@ -1,35 +1,27 @@
-from station import Station
-from module import Module
 import random
 
-
-GL_EVENTS = {  # number its level of module, range 1-4
-            # 5 is one fuel source
-            5: [1, 1, 1, 1, 1, 1, 1, 5],
-            67: [2, 2, 2, 2, 5],
-            127: [2, 2, 2, 5],
-            187: [3, 3, 5],
-            217: [3, 3, 5],
-            407: [4, 5],
-            507: [4],
-            607: [4, 4],
-            707: [4]
-}
-
-MODULES_POOL = []
-FUEL_POOL = 1
-NO_EVENT_TRESHOLD = 45
+from core.station import Station
+from core.module import Module
 
 
 class Game(object):
-    def __init__(self):
-        self.stations = [Station('Ganza'), Station('Lubanka'), Station('Nazi'), Station('Polis'), Station('Dirty')]
+    def __init__(self, config):
+        self.config = config
+        self.stations = [Station('Ganza', config),
+                         Station('Lubanka', config),
+                         Station('Nazi', config),
+                         Station('Polis', config),
+                         Station('Dirty', config)]
+        self.gl_events = config['game']['gl_events']
+        self.modules_pool = []
+        self.fuel_pool = config['game']['fuel_pool']
+        self.no_event_treshold = config['game']['no_event_treshold']
         self.empty_rounds = 0
         self.events = {}
 
     def tick(self, time):
         self.events.clear()
-        self.events['global'] = [' fuel_sources: {} modules {}'.format(FUEL_POOL, len(MODULES_POOL))]
+        self.events['global'] = [' fuel_sources: {} modules {}'.format(self.fuel_pool, len(self.modules_pool))]
         time = int(time.total_seconds() / 60)
         self.generate_events(time)
         self.do_events(time)
@@ -43,40 +35,38 @@ class Game(object):
         challengers = [_ for _ in self.stations if _.power > 30]
         if len(challengers) > 0:
             winner = random.choice(challengers)
-            global FUEL_POOL
-            if winner.fuel_sources == 0 and FUEL_POOL > 0:
+            if winner.fuel_sources == 0 and self.fuel_pool > 0:
                 winner.aquire_fuel()
-                FUEL_POOL -= 1
-            elif len(MODULES_POOL) > 0:
-                winner.aquire_modules(MODULES_POOL.pop(0))
+                self.fuel_pool -= 1
+            elif len(self.modules_pool) > 0:
+                winner.aquire_modules(self.modules_pool.pop(0))
 
     def do_events(self, mins):
-        if mins in GL_EVENTS.keys():
+        if mins in self.gl_events.keys():
             self.empty_rounds = 0
             if not self.events.get('global', False):
                 self.events['global'] = []
-            event = GL_EVENTS.get(mins)
+            event = self.gl_events.get(mins)
             for _ in event:
                 if _ in [1, 2, 3, 4]:
-                    MODULES_POOL.append(Module(_))
+                    self.modules_pool.append(Module(_, self.config))
                     self.events['global'].append('Event - spawned module')
                 elif _ == 5:
-                    global FUEL_POOL
-                    FUEL_POOL += 1
+                    self.fuel_pool += 1
                     self.events['global'].append('Added new fuel source')
 
     def generate_events(self, mins):
         self.empty_rounds += 1
-        if self.empty_rounds > NO_EVENT_TRESHOLD:
+        if self.empty_rounds > self.no_event_treshold:
             self.empty_rounds = 0
-            if mins + 1 not in GL_EVENTS.keys():
+            if mins + 1 not in self.gl_events.keys():
                 if not self.events.get('global', False):
                     self.events['global'] = []
                 event = [random.randint(1, 2) for _ in range(0, random.randint(1, 4))]
                 if random.randint(0, 3) > 0:
                     event.extend([5, 5])
                 self.events['global'].append('New event generated {}'.format(event))
-                GL_EVENTS[mins + 1] = event
+                self.gl_events[mins + 1] = event
 
     def endgame(self):
         res = '\n'.join([str(_) for _ in self.stations])
@@ -91,7 +81,7 @@ class Game(object):
     def move_module(self, station):
         if len(station.base.modules) > 9:
             deal = station.sell_module()
-            MODULES_POOL.append(deal)
+            self.modules_pool.append(deal)
             if not self.events.get('global', False):
                 self.events['global'] = []
             self.events['global'].append('{name} sells module {mod}'.format(name=station.name, mod=str(deal)))

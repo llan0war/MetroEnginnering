@@ -1,37 +1,26 @@
 import random
 
 
-globs = {
-    'prod': 2,
-    'prod_max': 500,
-    'base_fail': 0,
-    'max_modules': 9,
-    'fuel_refill': 1000,
-    'fuel_base_cons': 3
-    }
-
-NO_FAILS_TRESHOLD = 30
-
-
 class Base(object):
-    def __init__(self, name, prod=globs.get('prod'), prod_max=globs.get('prod_max'), base_fail=globs.get('base_fail'),
-                 max_modules=globs.get('max_modules'), fuel_refill=globs.get('fuel_refill'), fuel_cons=globs.get('fuel_base_cons')):
+    def __init__(self, name, config):
         self.name = name
+        self.config = config
         self.modules = []
         self.connected_modules = []
-        self.production = prod
+        self.production = config['base']['prod']
         self.producted = 0
-        self.fail = base_fail
+        self.fail = config['base']['base_fail']
         self.state = True
-        self.max_prod = prod_max
+        self.max_prod = config['base']['prod_max']
         self.disables = 0
-        self.connections = 3
-        self.max_modules = max_modules
+        self.connections = config['base']['connections']
+        self.max_modules = config['base']['max_modules']
         self.no_fails = 0
-        self.fuel_refill = fuel_refill
-        self.fuel = fuel_refill
+        self.fuel_refill = config['base']['fuel_refill']
+        self.fuel = config['base']['start_fuel']
         self.events = []
-        self.fuel_cons = fuel_cons
+        self.fuel_cons = config['base']['fuel_base_cons']
+        self.no_fail_treshold = config['base']['no_fail_treshold']
 
     def tick(self):
         self.events.clear()
@@ -52,7 +41,7 @@ class Base(object):
 
     def check_fail(self):
         self.no_fails += 1
-        if self.no_fails > NO_FAILS_TRESHOLD:
+        if self.no_fails > self.no_fail_treshold:
             fail = self.fail + sum([_.failure for _ in self.connected_modules])
             self.state = random.randint(0, 100) > fail
             if not self.state:
@@ -61,12 +50,12 @@ class Base(object):
         return self.state
 
     def fuel_state(self):
-        self.fuel -= self._fuel_consumption()
+        self.fuel -= self.fuel_consumption()
         if self.fuel > 0:
             return True
         return False
 
-    def _fuel_consumption(self):
+    def fuel_consumption(self):
         res = self.fuel_cons
         for _ in self.connected_modules:
             res += _.fuel
@@ -94,7 +83,6 @@ class Base(object):
                 done = True
 
     def _find_top_level(self):
-        # return max(self.modules, key=attrgetter('level'))
         possibilities = [_ for _ in self.modules if _ not in self.connected_modules]
         res = possibilities[0]
         for _ in possibilities:
@@ -131,4 +119,4 @@ class Base(object):
                     cm=','.join([str(_) for _ in self.connected_modules]))
 
     def fuel_recharge(self):
-        self.fuel = globs.get('fuel_refill')
+        self.fuel = self.fuel_refill

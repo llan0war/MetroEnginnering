@@ -2,12 +2,6 @@ import random
 import string
 random.seed()
 
-PERKS = ['prod',  # +1 production
-         'batt',  # -1 fuel cost
-         'fail',  # -0.5 fail chance
-         'conn'   # +1 connection
-         ]
-
 
 class Module(object):
     grade = {
@@ -17,12 +11,16 @@ class Module(object):
         4: 3   # violette
     }
 
-    def __init__(self, level, perks=PERKS):
+    def __init__(self, level, config):
         self.production = 0
         self.failure = 0
         self.fuel = 0
         self.max_prod = 0
-        self.all_perks = perks
+        self.all_perks = config['module']['all_perks']
+        self.__production_bonus = config['module']['production_bonus']
+        self.__fuel_bonus = config['module']['fuel_bonus']
+        self.__fail_bonus = config['module']['fail_bonus']
+
         self.perks = []
         self.level = level
         self.connections = 0
@@ -60,15 +58,16 @@ class Module(object):
 
         for _ in self.perks:
             if _ == 'prod':
-                self.production += 1
+                self.production += self.__production_bonus
             elif _ == 'batt':
-                self.fuel -= 1
+                self.fuel -= self.__fuel_bonus
             elif _ == 'fail':
-                self.failure -= 0.5
+                self.failure -= self.__fail_bonus
             elif _ == 'conn':
                 self.connections += 1
             else:
                 print('error in parsing perks')
+                exit(1)
 
     def stats(self):
         return 'Level: {level} prod {prod} fail {fail} conn {conn}\nperks {perks} '.format(level=self.level,

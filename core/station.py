@@ -1,14 +1,16 @@
-from base import Base
 import random
+
+from core.base import Base
 
 
 class Station(object):
-    def __init__(self, name):
-        self.base = Base(name)
+    def __init__(self, name, config):
+        self.config = config
+        self.base = Base(name, config)
         self.name = name
         self.power = 0  # abstract res for find modules
         self.resources = 0
-        self.fuel_sources = 1
+        self.fuel_sources = config['station']['fuel_sources']
         self.events = []
 
     def tick(self):
@@ -56,7 +58,7 @@ class Station(object):
                     am=len(self.base.connected_modules),
                     prod=self.resources,
                     fail=self.base.get_fail(),
-                    fuel=self.base._fuel_consumption())
+                    fuel=self.base.fuel_consumption())
         return stat + '\n' + str(self.base)
 
     def sell_module(self):
@@ -64,3 +66,12 @@ class Station(object):
 
     def get_fuel(self):
         return self.base.fuel + self.fuel_sources * self.base.fuel_refill
+
+    def stats(self):
+        res = dict(mod=len(self.base.modules),
+                   name=self.name,
+                   am=len(self.base.connected_modules),
+                   prod=self.resources,
+                   fail=self.base.get_fail(),
+                   fuel=self.base.fuel_consumption())
+        return res
