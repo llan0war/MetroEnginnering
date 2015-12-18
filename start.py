@@ -5,19 +5,28 @@ import os
 
 app = Flask(__name__)
 
-start = datetime.datetime(year=2016, month=1, day=10, hour=22, minute=0)
-end = datetime.datetime(year=2016, month=1, day=11, hour=12, minute=0)
-tdelta = datetime.timedelta(minutes=1)
 config = default_config()
 sim = Simulation(config)
+
 
 @app.route('/')
 def control():
     return render_template('index.html', cfg_st=True)
 
+
 @app.route('/simulate/')
 def simulate():
     pass
+
+
+@app.route('/config/')
+def show_config():
+    return render_template('config', config)
+
+
+@app.route('/config/apply/')
+def update_config():
+    return
 
 @app.route('/bootstrap/css/<path>')
 def load_css(path):
