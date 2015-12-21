@@ -5,10 +5,8 @@ import os
 # from flask.ext.wtf import Form
 from flask_wtf import Form
 from wtforms import BooleanField, StringField, IntegerField, FloatField, DateTimeField, FieldList, FormField
-from flask_bootstrap import Bootstrap
 
 app = Flask(__name__)
-Bootstrap(app)
 app.config.from_object('config')
 
 config = default_config()

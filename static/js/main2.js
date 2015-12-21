@@ -1,19 +1,3 @@
-{% extends "menu.html" %}
-{% block title %}MetroEngineering simulation{% endblock %}
-{% block content %}
-    <div class="container" style="margin-top: 70px">
-      <!-- Main hero unit for a primary marketing message or call to action -->
-      <div class="hero-unit">
-        <h1>MetroEngineering simulation</h1>
-        <p>Внимание, вы можете все сломать. Нажимая кнопку, подумайте - а действительно ли вы этого хотите? </p>
-            <body>
-
-                <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-                <script src="http://code.highcharts.com/highcharts.js"></script>
-                {% for chartname, chartval in charts.items() %}
-                    <div id={{ chartval.chartID }} class="chart"></div>
-                {% endfor %}
-<script>
 $(function () {
   // set the theme
   Highcharts.setOptions({
@@ -109,30 +93,3 @@ $(function () {
       }
     }
   });
-                  var options = {
-                    chart: {
-                      zoomType: 'xy'
-                    },
-                    xAxis: {
-                      type: 'datetime'
-                    }
-                  };
-                {% for chartname, chartval in charts.items() %}
-                      var {{ chartval.chartID }} = {
-                        chart: {
-                          renderTo: '{{ chartval.chartID }}'
-                        },
-                        title: {{ chartval.title|safe }},
-                        series: {{ chartval.series|safe }}
-                      };
-                      {{ chartval.chartID }} = jQuery.extend(true, {}, options, {{ chartval.chartID }});
-                      var {{ chartname }} = new Highcharts.Chart({{ chartval.chartID }});
-                {% endfor %}
-                });</script>
-
-            </body>
-
-      </div>
-
-    </div> <!-- /container -->
-{% endblock %}
