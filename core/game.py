@@ -16,6 +16,7 @@ class Game(object):
         self.modules_pool = []
         self.fuel_pool = config['game']['fuel_pool']
         self.no_event_treshold = config['game']['no_event_treshold']
+        self.random_events = config['game']['random_events']
         self.empty_rounds = 0
         self.events = {}
 
@@ -23,7 +24,8 @@ class Game(object):
         self.events.clear()
         self.events['global'] = [' fuel_sources: {} modules {}'.format(self.fuel_pool, len(self.modules_pool))]
         time = int(time.total_seconds() / 60)
-        self.generate_events(time)
+        if self.random_events:
+            self.generate_events(time)
         self.do_events(time)
         self.aquire_items()
         for _ in self.stations:

@@ -6,13 +6,16 @@
       <div class="hero-unit">
         <h1>MetroEngineering simulation</h1>
         <p>Внимание, вы можете все сломать. Нажимая кнопку, подумайте - а действительно ли вы этого хотите? </p>
-        {% if simulated %}
-            {{ polygon }}
-        {% else %}
-            <p><a href="/simulate/" class="btn btn-info">Врубить симуляцию &raquo;</a></p>
-        {% endif %}
 
-
+               <form class="form form-horizontal" method="post" role="form">
+                {{form.hidden_tag()}}
+                    <ul>
+                    {% for subfield in form %}
+                    <li>{{ subfield.label }} {{ subfield }} {{subfield.default}} {{subfield.description}}</li>
+                    {% endfor %}
+                    </ul>
+                <p><input type="submit" value="Save changes"></p>
+            </form>
       </div>
 
     </div> <!-- /container -->

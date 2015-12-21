@@ -61,6 +61,12 @@ class Base(object):
             res += _.fuel
         return res
 
+    def total_production(self):
+        res = self.production
+        for _ in self.connected_modules:
+            res += _.production
+        return res
+
     def get_fail(self):
         return self.fail + sum([_.failure for _ in self.connected_modules])
 

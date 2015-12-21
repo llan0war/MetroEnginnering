@@ -71,7 +71,9 @@ class Station(object):
         res = dict(mod=len(self.base.modules),
                    name=self.name,
                    am=len(self.base.connected_modules),
-                   prod=self.resources,
+                   producted=self.resources,
                    fail=self.base.get_fail(),
-                   fuel=self.base.fuel_consumption())
+                   fuel_cons=self.base.fuel_consumption(),
+                   production=self.base.total_production(),
+                   fuel_storage=self.base.fuel)
         return res

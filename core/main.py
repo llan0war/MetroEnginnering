@@ -11,26 +11,27 @@ class Simulation(object):
         self.tdelta = config['simulation']['tdelta']
         self.polygon = Game(config)
         self.history = {}
-        self.now = start
+        self.now = config['simulation']['start']
 
     def events_printer(self, events):
-        for station in events.keys():
-            for _ in events.get(station):
-                print('{} {}'.format(station, _))
+        res = '\n'.join(['\n'.join(['{} {}'.format(station, _) for _ in events.get(station)]) for station in events.keys() if len(events.get(station)) > 0])
+        # for station in events.keys():
+        #    res += '\n'.join(['{} {}'.format(station, _) for _ in events.get(station)])
+        return res
 
     def simulate(self):
-        while self.now < end:
+        while self.now < self.end:
             self.now += self.tdelta
             rand = int((self.now - self.start).total_seconds() / 60)
             print('Starting round {}[{}]'.format(self.now.strftime('%H-%M-%d'), rand))
-            self.polygon.tick(self.now - start)
+            self.polygon.tick(self.now - self.start)
             if rand in self.history.keys():
                 exit(1)
             else:
                 self.history[rand] = self.station_stats()
             self.history[rand]['events'] = self.polygon.events
 
-            self.events_printer(self.polygon.events)
+            print(self.events_printer(self.polygon.events))
         self.endgame()
 
     def endgame(self):
@@ -49,7 +50,7 @@ def default_config():
     globs = {
         'simulation': {
             'start': datetime.datetime(year=2016, month=1, day=10, hour=22, minute=0),
-            'end': datetime.datetime(year=2016, month=1, day=11, hour=12, minute=0),
+            'end': datetime.datetime(year=2016, month=1, day=11, hour=1, minute=0),
             'tdelta': datetime.timedelta(minutes=1)
         },
         'game': {
@@ -66,7 +67,8 @@ def default_config():
                 707: [4]
                 },
             'fuel_pool': 1,
-            'no_event_treshold': 45
+            'no_event_treshold': 45,
+            'random_events': True
         },
         'station': {
             'fuel_sources': 1
@@ -95,9 +97,6 @@ def default_config():
     return globs
 
 if __name__ == '__main__':
-    start = datetime.datetime(year=2016, month=1, day=10, hour=22, minute=0)
-    end = datetime.datetime(year=2016, month=1, day=11, hour=12, minute=0)
-    tdelta = datetime.timedelta(minutes=1)
     sim = Simulation(default_config())
     sim.simulate()
 
