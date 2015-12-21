@@ -12,6 +12,7 @@ class Simulation(object):
         self.polygon = Game(config)
         self.history = {}
         self.now = config['simulation']['start']
+        self.simulated = False
 
     def events_printer(self, events):
         res = '\n'.join(
@@ -35,6 +36,7 @@ class Simulation(object):
 
             print(self.events_printer(self.polygon.events))
         self.endgame()
+        self.simulated = True
 
     def endgame(self):
         print(self.polygon.endgame())

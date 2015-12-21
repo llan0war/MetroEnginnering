@@ -14,8 +14,13 @@
             <a class="brand" href="#">Menu</a>
             <ul class="nav">
                 <li class="active"><a href="/">Главная</a></li>
-                <li class="active"><a href="/config/">Панель управленя</a></li>
-                <li><a href="/charts/">Логи симуляции</a></li>
+                <li class="active"><a href="/config/">Настройки</a></li>
+                <li class="active"><a href="/config_events/">Эвенты</a></li>
+                {% if simulated %}
+                    <li class="active"><a href="/charts/">Графики</a></li>
+                    <li class="active"><a href="/logs/">Логи</a></li>
+                    <li class="active"><a href="/logsfull/">Логи без разбивки</a></li>
+                {% endif %}
             </ul>
         </div>
     </div>

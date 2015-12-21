@@ -2,7 +2,6 @@ from flask import Flask, render_template, redirect, request
 
 from core.main import Simulation, default_config
 
-# from flask.ext.wtf import Form
 from flask_wtf import Form
 from wtforms import BooleanField, IntegerField, FloatField, DateTimeField
 
@@ -11,7 +10,6 @@ app.config.from_object('config')
 
 config = default_config()
 sim = Simulation(config)
-simulated = False
 
 
 class ConfigForm(Form):
@@ -57,9 +55,39 @@ class ConfigForm(Form):
 
 
 @app.route('/')
-def control():
-    global sim, simulated
-    return render_template('index.html', polygon=sim.polygon.endgame(), simulated=simulated)
+def main():
+    global sim
+    return render_template('index.html', polygon=sim.polygon.endgame(), simulated=sim.simulated)
+
+
+@app.route('/logs/')
+def logs():
+    global sim
+    if not sim.simulated:
+        return redirect('/')
+    return render_template('logs.html', logs={_: sim.history.get(_).get('events') for _ in sim.history.keys()},
+                           simulated=sim.simulated, heads=[_ for _ in sim.history[1]['events'].keys()])
+
+@app.route('/logsfull/')
+def logsfull():
+    global sim
+    if not sim.simulated:
+        return redirect('/')
+
+    return render_template('logsfull.html', simulated=sim.simulated, logsfull=raw_log_parser())
+
+
+def raw_log_parser():
+    global sim
+    events = {_: __['events'] for _, __ in sim.history.items()}
+    parsed_evn = {}
+    for rnd, evn in events.items():
+        parsed_evn[rnd] = []
+        for station, stevn in evn.items():
+            if len(stevn) > 0:
+                parsed_evn[rnd].append('{} {}'.format(station, ', '.join([str(_) for _ in stevn])))
+    res = '\n'.join(['{} {}'.format(_, __) for _, __ in parsed_evn.items()])
+    return parsed_evn
 
 
 @app.route('/simulate/')
@@ -80,7 +108,19 @@ def config_module():
         for _ in form.data.keys():
             update_config(_, form.data.get(_))
         return redirect('/config/')
-    return render_template('editor.html', form=form)
+    return render_template('editor.html', form=form, simulated=sim.simulated)
+
+
+@app.route('/config_events/', methods=['GET', 'POST'])
+def config_events():
+    form = ConfigForm()
+    if request.method == 'POST':
+        global simulated
+        simulated = False
+        for _ in form.data.keys():
+            update_config(_, form.data.get(_))
+        return redirect('/config/')
+    return render_template('events_editor.html', form=form, simulated=sim.simulated)
 
 
 def update_config(key, val):
@@ -94,6 +134,9 @@ def update_config(key, val):
 
 @app.route('/charts/')
 def charts(chartID='chart_ID', chart_type='line', chart_height=350):
+    if not sim.simulated:
+        return redirect('/')
+
     chart = {"renderTo": chartID, "type": chart_type, "height": chart_height}
     series = [{"name": 'Label1', "data": [1, 2, 3]}, {"name": 'Label2', "data": [4, 5, 6]}]
     title = {"text": 'My Title'}
@@ -101,7 +144,7 @@ def charts(chartID='chart_ID', chart_type='line', chart_height=350):
     yAxis = {"title": {"text": 'yAxis Label'}}
     charts = chart_builder(history_parser())
     return render_template('charts.html', charts=charts, prod=charts['total_energy_producted'],
-                           fail=charts['disable_chance'])
+                           fail=charts['disable_chance'], simulated=sim.simulated)
 
 
 def chart_builder(data):
