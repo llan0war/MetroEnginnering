@@ -1,10 +1,10 @@
-from flask import Flask, render_template, redirect, Response, flash, request
+from flask import Flask, render_template, redirect, request
+
 from core.main import Simulation, default_config
-import datetime
-import os
+
 # from flask.ext.wtf import Form
 from flask_wtf import Form
-from wtforms import BooleanField, StringField, IntegerField, FloatField, DateTimeField, FieldList, FormField
+from wtforms import BooleanField, IntegerField, FloatField, DateTimeField
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -17,28 +17,43 @@ simulated = False
 class ConfigForm(Form):
     global config
     # Module
-    production_bonus = FloatField('production_bonus', default=config.get('module').get('production_bonus'), description='MODULE: production bonus per perk')
-    fail_bonus = FloatField('fail_bonus', default=config.get('module').get('fail_bonus'), description='MODULE: value to substract from fail per perk')
-    fuel_bonus = FloatField('fuel_bonus', default=config.get('module').get('fuel_bonus'), description='MODULE: value to substract from fuel usage per perk')
+    production_bonus = FloatField('production_bonus', default=config.get('module').get('production_bonus'),
+                                  description='MODULE: production bonus per perk')
+    fail_bonus = FloatField('fail_bonus', default=config.get('module').get('fail_bonus'),
+                            description='MODULE: value to substract from fail per perk')
+    fuel_bonus = FloatField('fuel_bonus', default=config.get('module').get('fuel_bonus'),
+                            description='MODULE: value to substract from fuel usage per perk')
     # Base
     prod = FloatField('prod', default=config.get('base').get('prod'), description='BASE: default production value')
-    prod_max = FloatField('prod_max', default=config.get('base').get('prod_max'), description='BASE: max storage capacity')
-    base_fail = FloatField('base_fail', default=config.get('base').get('base_fail'), description='BASE: default fail chance')
-    max_modules = FloatField('max_modules', default=config.get('base').get('max_modules'), description='BASE: max connected modules')
+    prod_max = FloatField('prod_max', default=config.get('base').get('prod_max'),
+                          description='BASE: max storage capacity')
+    base_fail = FloatField('base_fail', default=config.get('base').get('base_fail'),
+                           description='BASE: default fail chance')
+    max_modules = FloatField('max_modules', default=config.get('base').get('max_modules'),
+                             description='BASE: max connected modules')
     fuel_refill = FloatField('fuel_refill', default=config.get('base').get('fuel_refill'), description='BASE: ')
-    fuel_base_cons = FloatField('fuel_base_cons', default=config.get('base').get('fuel_base_cons'), description='BASE: default fuel consumption')
-    connections = FloatField('connections', default=config.get('base').get('connections'), description='BASE: default number of connections')
-    start_fuel = FloatField('start_fuel', default=config.get('base').get('start_fuel'), description='BASE: starting fuel count')
+    fuel_base_cons = FloatField('fuel_base_cons', default=config.get('base').get('fuel_base_cons'),
+                                description='BASE: default fuel consumption')
+    connections = FloatField('connections', default=config.get('base').get('connections'),
+                             description='BASE: default number of connections')
+    start_fuel = FloatField('start_fuel', default=config.get('base').get('start_fuel'),
+                            description='BASE: starting fuel count')
     # Station
-    fuel_sources = FloatField('fuel_sources', default=config.get('station').get('fuel_sources'), description='STATION: default fuel sources count')
+    fuel_sources = FloatField('fuel_sources', default=config.get('station').get('fuel_sources'),
+                              description='STATION: default fuel sources count')
     # Game
-    fuel_pool = FloatField('fuel_pool', default=config.get('game').get('fuel_pool'), description='GAME: starting fuel sources in game')
-    no_event_treshold = FloatField('no_event_treshold', default=config.get('game').get('no_event_treshold'), description='GAME: time without events before new event generated')
-    random_events = BooleanField('random_events', default=config.get('game').get('random_events'), description='GAME: set checked to generate random events')
+    fuel_pool = FloatField('fuel_pool', default=config.get('game').get('fuel_pool'),
+                           description='GAME: starting fuel sources in game')
+    no_event_treshold = FloatField('no_event_treshold', default=config.get('game').get('no_event_treshold'),
+                                   description='GAME: time without events before new event generated')
+    random_events = BooleanField('random_events', default=config.get('game').get('random_events'),
+                                 description='GAME: set checked to generate random events')
     # Simulation
-    start = DateTimeField('start', default=config.get('simulation').get('start'), description='SIMULATION: start date and time')
+    start = DateTimeField('start', default=config.get('simulation').get('start'),
+                          description='SIMULATION: start date and time')
     end = DateTimeField('end', default=config.get('simulation').get('end'), description='SIMULATION: end date and time')
-    tdelta = IntegerField('tdelta', default=config.get('simulation').get('tdelta'), description='SIMULATION: time for one internal cycle')
+    tdelta = IntegerField('tdelta', default=config.get('simulation').get('tdelta'),
+                          description='SIMULATION: time for one internal cycle')
 
 
 @app.route('/')
@@ -56,7 +71,7 @@ def simulate():
     return redirect('/')
 
 
-@app.route('/config/', methods = ['GET', 'POST'])
+@app.route('/config/', methods=['GET', 'POST'])
 def config_module():
     form = ConfigForm()
     if request.method == 'POST':
@@ -66,6 +81,7 @@ def config_module():
             update_config(_, form.data.get(_))
         return redirect('/config/')
     return render_template('editor.html', form=form)
+
 
 def update_config(key, val):
     global config
@@ -77,15 +93,15 @@ def update_config(key, val):
 
 
 @app.route('/charts/')
-def charts(chartID = 'chart_ID', chart_type = 'line', chart_height = 350):
-
+def charts(chartID='chart_ID', chart_type='line', chart_height=350):
     chart = {"renderTo": chartID, "type": chart_type, "height": chart_height}
-    series = [{"name": 'Label1', "data": [1,2,3]}, {"name": 'Label2', "data": [4, 5, 6]}]
+    series = [{"name": 'Label1', "data": [1, 2, 3]}, {"name": 'Label2', "data": [4, 5, 6]}]
     title = {"text": 'My Title'}
     xAxis = {"categories": ['xAxis Data1', 'xAxis Data2', 'xAxis Data3']}
     yAxis = {"title": {"text": 'yAxis Label'}}
     charts = chart_builder(history_parser())
-    return render_template('charts.html', charts=charts, prod=charts['total_energy_producted'], fail=charts['disable_chance'])
+    return render_template('charts.html', charts=charts, prod=charts['total_energy_producted'],
+                           fail=charts['disable_chance'])
 
 
 def chart_builder(data):
@@ -95,10 +111,11 @@ def chart_builder(data):
         res[type_desc]['chartID'] = type_desc
         res[type_desc]['chart'] = {"renderTo": type_desc, "type": 'line', "height": '350'}
         res[type_desc]['title'] = {'text': type_desc}
-        res[type_desc]['xAxis'] = {"categories": [_ for _ in range(0, len(next (iter (data.get(type_desc).values()))))]}
+        res[type_desc]['xAxis'] = {"categories": [_ for _ in range(0, len(next(iter(data.get(type_desc).values()))))]}
         res[type_desc]['yAxis'] = {'title': 'what?'}
         res[type_desc]['series'] = [{'name': name, 'data': val} for name, val in data.get(type_desc).items()]
     return res
+
 
 def history_parser():
     stations = [_ for _ in sim.history[1].keys() if _ != 'events']
@@ -108,7 +125,7 @@ def history_parser():
              'fuel_cons': 'fuel_consumation',
              'fuel_storage': 'remainig_fuel',
              'am': 'attached_modules'}
-    res = {_:{__: [] for __ in stations} for _ in types.values()}  # {type: {station: []}}
+    res = {_: {__: [] for __ in stations} for _ in types.values()}  # {type: {station: []}}
 
     for type, desc in types.items():
         for station in stations:
@@ -116,16 +133,6 @@ def history_parser():
                 res[desc][station].append(sim.history[round][station][type])
     return res
 
-
-'''@app.route('/bootstrap/css/<path>')
-def load_css(path):
-    fullpath = os.getcwd() + '/templates/bootstrap/css/' + path
-    if os.path.exists(fullpath):
-        with open(fullpath) as f:
-            data = f.read()
-        return Response(response=data, mimetype='text/css')
-    return 'Fail!'
-    '''
 
 if __name__ == '__main__':
     app.run(debug=True)

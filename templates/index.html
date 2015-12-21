@@ -1,19 +1,20 @@
 {% extends "menu.html" %}
 {% block title %}MetroEngineering simulation{% endblock %}
 {% block content %}
-    <div class="container" style="margin-top: 70px">
-      <!-- Main hero unit for a primary marketing message or call to action -->
-      <div class="hero-unit">
+<div class="container" style="margin-top: 70px">
+    <!-- Main hero unit for a primary marketing message or call to action -->
+    <div class="hero-unit">
         <h1>MetroEngineering simulation</h1>
+
         <p>Внимание, вы можете все сломать. Нажимая кнопку, подумайте - а действительно ли вы этого хотите? </p>
         {% if simulated %}
-            {{ polygon }}
+        {{ polygon }}
         {% else %}
-            <p><a href="/simulate/" class="btn btn-info">Врубить симуляцию &raquo;</a></p>
+        <p><a href="/simulate/" class="btn btn-info">Врубить симуляцию &raquo;</a></p>
         {% endif %}
 
 
-      </div>
+    </div>
 
-    </div> <!-- /container -->
+</div> <!-- /container -->
 {% endblock %}

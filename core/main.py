@@ -14,9 +14,11 @@ class Simulation(object):
         self.now = config['simulation']['start']
 
     def events_printer(self, events):
-        res = '\n'.join(['\n'.join(['{} {}'.format(station, _) for _ in events.get(station)]) for station in events.keys() if len(events.get(station)) > 0])
+        res = '\n'.join(
+            ['\n'.join(['{} {}'.format(station, _) for _ in events.get(station)]) for station in events.keys() if
+             len(events.get(station)) > 0])
         # for station in events.keys():
-        #    res += '\n'.join(['{} {}'.format(station, _) for _ in events.get(station)])
+        # res += '\n'.join(['{} {}'.format(station, _) for _ in events.get(station)])
         return res
 
     def simulate(self):
@@ -55,17 +57,17 @@ def default_config():
         },
         'game': {
             'gl_events': {  # number its level of module, range 1-4
-                # 5 is one fuel source
-                5: [1, 1, 1, 1, 1, 1, 1, 5],
-                67: [2, 2, 2, 2, 5],
-                127: [2, 2, 2, 5],
-                187: [3, 3, 5],
-                217: [3, 3, 5],
-                407: [4, 5],
-                507: [4],
-                607: [4, 4],
-                707: [4]
-                },
+                            # 5 is one fuel source
+                            5: [1, 1, 1, 1, 1, 1, 1, 5],
+                            67: [2, 2, 2, 2, 5],
+                            127: [2, 2, 2, 5],
+                            187: [3, 3, 5],
+                            217: [3, 3, 5],
+                            407: [4, 5],
+                            507: [4],
+                            607: [4, 4],
+                            707: [4]
+                            },
             'fuel_pool': 1,
             'no_event_treshold': 45,
             'random_events': True
@@ -88,13 +90,14 @@ def default_config():
             'all_perks': ['prod',  # +1 production
                           'batt',  # -1 fuel cost
                           'fail',  # -0.5 fail chance
-                          'conn'],   # +1 connection
+                          'conn'],  # +1 connection
             'production_bonus': 1,
             'fail_bonus': 0.5,
             'fuel_bonus': 1
         }
     }
     return globs
+
 
 if __name__ == '__main__':
     sim = Simulation(default_config())

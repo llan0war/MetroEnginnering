@@ -53,6 +53,7 @@ class Base(object):
         self.fuel -= self.fuel_consumption()
         if self.fuel > 0:
             return True
+        self.fuel = 0
         return False
 
     def fuel_consumption(self):
@@ -82,7 +83,8 @@ class Base(object):
         self.connected_modules.clear()
         done = False
         while not done:
-            if self._free_connections() > 0 and len(self.modules) > len(self.connected_modules) and len(self.connected_modules) < self.max_modules:
+            if self._free_connections() > 0 and len(self.modules) > len(self.connected_modules) and len(
+                    self.connected_modules) < self.max_modules:
                 curr = self._find_top_level()
                 self.connected_modules.append(curr)
             else:
@@ -117,8 +119,8 @@ class Base(object):
 
     def __repr__(self):
         # return '  Modules: {m:5}\n  Connected: {cn:5}'.format(m='\n'.join([str(_) for _ in self.modules]),
-        #                                                      cn='\n'.join([str(_) for _ in self.connected_modules]))
-        return '{name} base, fails: {f}\n  modules: {mods}\n  connected: {cm}'\
+        # cn='\n'.join([str(_) for _ in self.connected_modules]))
+        return '{name} base, fails: {f}\n  modules: {mods}\n  connected: {cm}' \
             .format(name=self.name,
                     f=self.disables,
                     mods=','.join([str(_) for _ in self.modules]),

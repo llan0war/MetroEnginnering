@@ -1,5 +1,6 @@
 import random
 import string
+
 random.seed()
 
 
@@ -8,7 +9,7 @@ class Module(object):
         1: 2,  # white
         2: 3,  # green
         3: 3,  # blue
-        4: 3   # violette
+        4: 3  # violette
     }
 
     def __init__(self, level, config):
@@ -78,7 +79,8 @@ class Module(object):
 
     def __id_gen(self):
         return '{l}{perks}#{hash}'.format(perks=''.join([_[0] for _ in self.perks]),
-                                          hash=''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10)),
+                                          hash=''.join(
+                                              random.choice(string.ascii_uppercase + string.digits) for _ in range(10)),
                                           l=str(self.level))
 
     def __repr__(self):

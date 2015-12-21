@@ -52,7 +52,7 @@ class Station(object):
         self.events.extend(self.base.events)
 
     def __repr__(self):
-        stat = 'Station: {name} modules:{mod} active:{am} producted: {prod} fail: {fail}% fuel cons: {fuel}'\
+        stat = 'Station: {name} modules:{mod} active:{am} producted: {prod} fail: {fail}% fuel cons: {fuel}' \
             .format(mod=len(self.base.modules),
                     name=self.name,
                     am=len(self.base.connected_modules),
