@@ -8,7 +8,7 @@ class Simulation(object):
         self.config = config
         self.start = config['simulation']['start']
         self.end = config['simulation']['end']
-        self.tdelta = config['simulation']['tdelta']
+        self.tdelta = datetime.timedelta(minutes=config['simulation']['tdelta'])
         self.polygon = Game(config)
         self.history = {}
         self.now = config['simulation']['start']
@@ -51,7 +51,7 @@ def default_config():
         'simulation': {
             'start': datetime.datetime(year=2016, month=1, day=10, hour=22, minute=0),
             'end': datetime.datetime(year=2016, month=1, day=11, hour=1, minute=0),
-            'tdelta': datetime.timedelta(minutes=1)
+            'tdelta': 1
         },
         'game': {
             'gl_events': {  # number its level of module, range 1-4
