@@ -21,12 +21,13 @@ class Base(object):
         self.events = []
         self.fuel_cons = config['base']['fuel_base_cons']
         self.no_fail_treshold = config['base']['no_fail_treshold']
+        self.fail_penalty = config['base']['fail_penalty']
 
     def tick(self):
         self.events.clear()
         if self.state:
             if not self.check_fail():
-                self.producted = 0
+                self.producted = int(self.producted * (100 - self.fail_penalty))
                 self.events.append(' Base broken')
                 return 0
             if self.fuel_state():
@@ -83,10 +84,13 @@ class Base(object):
         self.connected_modules.clear()
         done = False
         while not done:
-            if self._free_connections() > 0 and len(self.modules) > len(self.connected_modules) and len(
-                    self.connected_modules) < self.max_modules:
-                curr = self._find_top_level()
-                self.connected_modules.append(curr)
+            if (len(self.connected_modules) < self.max_modules) and (len(self.connected_modules) < len(self.modules)):
+                if self._free_connections() > 0:
+                    curr = self._find_top_level()
+                    self.connected_modules.append(curr)
+                else:
+                    if not self._add_another_modules():
+                        done = True
             else:
                 done = True
 
@@ -105,6 +109,15 @@ class Base(object):
             if _.level < res.level:
                 res = _
         return res
+
+    def _add_another_modules(self):
+        if len(self.connected_modules) < self.max_modules:
+            possibilities = [_ for _ in self.modules if _ not in self.connected_modules]
+            for module in possibilities:
+                if module.connections > 0:
+                    self.connected_modules.append(module)
+                    return True
+        return False
 
     def sell_module(self):
         target = self._find_low_level()

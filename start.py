@@ -36,6 +36,8 @@ class ConfigForm(Form):
                              description='BASE: default number of connections')
     start_fuel = FloatField('start_fuel', default=config.get('base').get('start_fuel'),
                             description='BASE: starting fuel count')
+    fail_penalty = FloatField('fail_penalty', default=config.get('base').get('fail_penalty'),
+                              description='BASE: production penalty while fail, in percents')
     # Station
     fuel_sources = FloatField('fuel_sources', default=config.get('station').get('fuel_sources'),
                               description='STATION: default fuel sources count')
@@ -96,6 +98,14 @@ def simulate():
     sim = Simulation(config)
     sim.simulate()
     simulated = True
+    return redirect('/')
+
+@app.route('/simulate/kill/')
+def kill_sim():
+    global sim, config, simulated
+    sim = None
+    sim = Simulation(config)
+    simulated = False
     return redirect('/')
 
 

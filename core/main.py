@@ -86,7 +86,8 @@ def default_config():
             'fuel_base_cons': 3,
             'no_fail_treshold': 30,
             'connections': 3,
-            'start_fuel': 1000
+            'start_fuel': 1000,
+            'fail_penalty': 20
         },
         'module': {
             'all_perks': ['prod',  # +1 production
