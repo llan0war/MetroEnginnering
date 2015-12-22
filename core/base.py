@@ -141,3 +141,8 @@ class Base(object):
 
     def fuel_recharge(self):
         self.fuel = self.fuel_refill
+
+    def modules_sum(self):
+        if len(self.connected_modules) > 0:
+            return sum([_.level for _ in self.connected_modules])
+        return 0

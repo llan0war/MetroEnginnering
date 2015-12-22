@@ -153,8 +153,7 @@ def charts(chartID='chart_ID', chart_type='line', chart_height=350):
     xAxis = {"categories": ['xAxis Data1', 'xAxis Data2', 'xAxis Data3']}
     yAxis = {"title": {"text": 'yAxis Label'}}
     charts = chart_builder(history_parser())
-    return render_template('charts.html', charts=charts, prod=charts['total_energy_producted'],
-                           fail=charts['disable_chance'], simulated=sim.simulated)
+    return render_template('charts.html', charts=charts, simulated=sim.simulated)
 
 
 def chart_builder(data):
@@ -177,7 +176,8 @@ def history_parser():
              'fail': 'disable_chance',
              'fuel_cons': 'fuel_consumation',
              'fuel_storage': 'remainig_fuel',
-             'am': 'attached_modules'}
+             'am': 'attached_modules',
+             'module_levels': 'module_levels'}
     res = {_: {__: [] for __ in stations} for _ in types.values()}  # {type: {station: []}}
 
     for type, desc in types.items():

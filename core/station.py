@@ -75,5 +75,6 @@ class Station(object):
                    fail=self.base.get_fail(),
                    fuel_cons=self.base.fuel_consumption(),
                    production=self.base.total_production(),
-                   fuel_storage=self.base.fuel)
+                   fuel_storage=self.base.fuel,
+                   module_levels=self.base.modules_sum())
         return res
