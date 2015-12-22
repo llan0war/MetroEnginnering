@@ -158,10 +158,13 @@ def charts(chartID='chart_ID', chart_type='line', chart_height=350):
 
 def chart_builder(data):
     res = {}
+    bar_charts = ['fails_count', 'used_fuel']
     for type_desc in data.keys():
         res[type_desc] = {}
         res[type_desc]['chartID'] = type_desc
-        res[type_desc]['chart'] = {"renderTo": type_desc, "type": 'line', "height": '350'}
+        res[type_desc]['chart'] = {"renderTo": type_desc,
+                                   "type": 'bar' if type_desc in bar_charts else 'line',
+                                   "height": '350'}
         res[type_desc]['title'] = {'text': type_desc}
         res[type_desc]['xAxis'] = {"categories": [_ for _ in range(0, len(next(iter(data.get(type_desc).values()))))]}
         res[type_desc]['yAxis'] = {'title': 'what?'}
@@ -170,6 +173,7 @@ def chart_builder(data):
 
 
 def history_parser():
+    global sim
     stations = [_ for _ in sim.history[1].keys() if _ != 'events']
     types = {'production': 'total_production',
              'producted': 'total_energy_producted',
@@ -184,6 +188,8 @@ def history_parser():
         for station in stations:
             for round in sim.history.keys():
                 res[desc][station].append(sim.history[round][station][type])
+    res['fails_count'] = {_: [__] for _, __ in sim.polygon.disables_count().items()}
+    res['used_fuel'] = {_: [__] for _, __ in sim.polygon.fuel_used().items()}
     return res
 
 

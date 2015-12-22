@@ -78,3 +78,9 @@ class Station(object):
                    fuel_storage=self.base.fuel,
                    module_levels=self.base.modules_sum())
         return res
+
+    def disables_count(self):
+        return self.base.disables
+
+    def used_fuel(self):
+        return self.base.fuel_used

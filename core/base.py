@@ -22,6 +22,7 @@ class Base(object):
         self.fuel_cons = config['base']['fuel_base_cons']
         self.no_fail_treshold = config['base']['no_fail_treshold']
         self.fail_penalty = config['base']['fail_penalty']
+        self.fuel_used = 0
 
     def tick(self):
         self.events.clear()
@@ -53,6 +54,7 @@ class Base(object):
     def fuel_state(self):
         self.fuel -= self.fuel_consumption()
         if self.fuel > 0:
+            self.fuel_used += self.fuel_consumption()
             return True
         self.fuel = 0
         return False

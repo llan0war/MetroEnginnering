@@ -119,7 +119,8 @@ $(function () {
                 {% for chartname, chartval in charts.items() %}
                       var {{ chartval.chartID }} = {
                         chart: {
-                          renderTo: '{{ chartval.chartID }}'
+                          renderTo: '{{ chartval.chartID }}',
+                          type: '{{ chartval.chart.type }}'
                         },
                         title: {{ chartval.title|safe }},
                         series: {{ chartval.series|safe }}

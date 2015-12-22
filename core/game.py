@@ -87,3 +87,9 @@ class Game(object):
             if not self.events.get('global', False):
                 self.events['global'] = []
             self.events['global'].append('{name} sells module {mod}'.format(name=station.name, mod=str(deal)))
+
+    def disables_count(self):
+        return {_.name: _.disables_count() for _ in self.stations}
+
+    def fuel_used(self):
+        return {_.name: _.used_fuel() for _ in self.stations}
