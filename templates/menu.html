@@ -11,17 +11,17 @@
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container">
-            <a class="brand" href="#">Menu</a>
+            <a class="brand">Menu</a>
             <ul class="nav">
                 <li class="active"><a href="/">Главная</a></li>
                 <li class="active"><a href="/config/">Настройки</a></li>
                 <li class="active"><a href="/config_events/">Эвенты</a></li>
-                <li class="active"><a href="/simulate/">Новая симуляция</a></li>
+                <li><a href="/simulate/">Новая симуляция</a></li>
                 {% if simulated %}
                     <li class="active"><a href="/charts/">Графики</a></li>
                     <li class="active"><a href="/logs/">Логи</a></li>
                     <li class="active"><a href="/logsfull/">Логи без разбивки</a></li>
-                    <li class="active"><a href="/simulate/kill/">Убить симуляцию</a></li>
+                    <li><a href="/simulate/kill/">Убить симуляцию</a></li>
                 {% endif %}
             </ul>
         </div>

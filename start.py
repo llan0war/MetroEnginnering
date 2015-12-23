@@ -81,14 +81,13 @@ def logsfull():
 
 def raw_log_parser():
     global sim
-    events = {_: __['events'] for _, __ in sim.history.items()}
+    events = {_: sim.history[_]['events'] for _ in sim.history.keys()}
     parsed_evn = {}
     for rnd, evn in events.items():
         parsed_evn[rnd] = []
         for station, stevn in evn.items():
             if len(stevn) > 0:
                 parsed_evn[rnd].append('{} {}'.format(station, ', '.join([str(_) for _ in stevn])))
-    res = '\n'.join(['{} {}'.format(_, __) for _, __ in parsed_evn.items()])
     return parsed_evn
 
 

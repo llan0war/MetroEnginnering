@@ -27,7 +27,7 @@ class Simulation(object):
             self.now += self.tdelta
             rand = int((self.now - self.start).total_seconds() / 60)
             print('Starting round {}[{}]'.format(self.now.strftime('%H-%M-%d'), rand))
-            self.polygon.tick(self.now - self.start)
+            self.polygon.tick(rand)
             if rand in self.history.keys():
                 exit(1)
             else:

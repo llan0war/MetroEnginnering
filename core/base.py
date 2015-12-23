@@ -28,7 +28,7 @@ class Base(object):
         self.events.clear()
         if self.state:
             if not self.check_fail():
-                self.producted = int(self.producted * (100 - self.fail_penalty))
+                self.producted = int(self.producted * (100 - self.fail_penalty) / 100)
                 self.events.append(' Base broken')
                 return 0
             if self.fuel_state():

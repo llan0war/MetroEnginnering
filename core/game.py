@@ -21,9 +21,8 @@ class Game(object):
         self.events = {}
 
     def tick(self, time):
-        self.events.clear()
+        self.events = dict()
         self.events['global'] = [' fuel_sources: {} modules {}'.format(self.fuel_pool, len(self.modules_pool))]
-        time = int(time.total_seconds() / 60)
         if self.random_events:
             self.generate_events(time)
         self.do_events(time)

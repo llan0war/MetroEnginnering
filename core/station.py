@@ -14,7 +14,7 @@ class Station(object):
         self.events = []
 
     def tick(self):
-        self.events.clear()
+        self.events = []
         self.power += random.randint(1, 2)
         self.res_is_full()
         self.base_status()
@@ -38,6 +38,7 @@ class Station(object):
     def aquire_fuel(self):
         self.power = 0
         self.fuel_sources += 1
+        self.events.append(' aquired fuel source')
 
     def res_is_full(self):
         if self.base.producted > self.base.max_prod / 2:
