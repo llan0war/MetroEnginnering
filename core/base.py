@@ -8,9 +8,10 @@ class Base(object):
         self.modules = []
         self.connected_modules = []
         self.production = config['base']['prod']
-        self.producted = 0
+        self._producted = 0
         self.fail = config['base']['base_fail']
         self.state = True
+        self.base_storage = config['base']['prod_max']
         self.max_prod = config['base']['prod_max']
         self.disables = 0
         self.connections = config['base']['connections']
@@ -22,24 +23,29 @@ class Base(object):
         self.fuel_cons = config['base']['fuel_base_cons']
         self.no_fail_treshold = config['base']['no_fail_treshold']
         self.fail_penalty = config['base']['fail_penalty']
+        self.storage_per_module = config['base']['storage_per_module']
         self.fuel_used = 0
 
     def tick(self):
         self.events.clear()
         if self.state:
             if not self.check_fail():
-                self.producted = int(self.producted * (100 - self.fail_penalty) / 100)
+                self._producted = int(self._producted * (100 - self.fail_penalty) / 100)
                 self.events.append(' Base broken')
                 return 0
             if self.fuel_state():
                 prod = self.production
                 for _ in self.connected_modules:
                     prod += _.production
-                self.producted += prod if self.producted < self.max_prod else self.max_prod
+                prod *= self.scale_prod(prod)
+                self._producted += prod if self._producted < self.max_prod else self.max_prod
                 return prod
             else:
                 self.events.append(' out of fuel')
         return 0
+
+    def scale_prod(self, prod):
+        return 2 * prod * (self._producted + 0.8) / (self.max_prod + 0.8)
 
     def check_fail(self):
         self.no_fails += 1
@@ -95,6 +101,7 @@ class Base(object):
                         done = True
             else:
                 done = True
+        self.max_prod = len(self.connected_modules) * self.storage_per_module + self.base_storage
 
     def _find_top_level(self):
         possibilities = [_ for _ in self.modules if _ not in self.connected_modules]
@@ -148,3 +155,6 @@ class Base(object):
         if len(self.connected_modules) > 0:
             return sum([_.level for _ in self.connected_modules])
         return 0
+
+    def producted(self):
+        return int(self._producted)

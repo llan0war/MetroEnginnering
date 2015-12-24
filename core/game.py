@@ -12,6 +12,7 @@ class Game(object):
                          Station('Nazi', config),
                          Station('Polis', config),
                          Station('Dirty', config)]
+        self.do_special_stations()
         self.gl_events = config['game']['gl_events']
         self.modules_pool = []
         self.fuel_pool = config['game']['fuel_pool']
@@ -19,6 +20,11 @@ class Game(object):
         self.random_events = config['game']['random_events']
         self.empty_rounds = 0
         self.events = {}
+
+    def do_special_stations(self):
+        cfg = self.config.copy()
+        cfg['base']['max_modules'] = 0
+        self.stations.append(Station('ZeroModules', cfg))
 
     def tick(self, time):
         self.events = dict()

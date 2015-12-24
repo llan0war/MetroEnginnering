@@ -41,12 +41,15 @@ class Station(object):
         self.events.append(' aquired fuel source')
 
     def res_is_full(self):
-        if self.base.producted > self.base.max_prod / 2:
-            decision = random.randint(0, 100) < (self.base.producted / self.base.max_prod) * 100
-            if decision:
-                self.events.append(' is full {}/{}, emptyng'.format(self.base.producted, self.base.max_prod))
-                self.resources += self.base.producted
-                self.base.producted = 0
+        if self.base.producted() > self.base.max_prod * 0.75:
+            decision = random.randint(75, 100) < (self.base.producted() / self.base.max_prod) * 100
+            if decision or self.base.producted() >= self.base.max_prod:
+                self.collect()
+
+    def collect(self):
+        self.events.append(' is full {}/{}, emptyng'.format(self.base.producted, self.base.max_prod))
+        self.resources += self.base.producted()
+        self.base._producted = 0
 
     def get_res(self):
         self.base.tick()

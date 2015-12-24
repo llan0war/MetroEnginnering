@@ -54,7 +54,7 @@ def default_config():
     globs = {
         'simulation': {
             'start': datetime.datetime(year=2016, month=1, day=10, hour=22, minute=0),
-            'end': datetime.datetime(year=2016, month=1, day=11, hour=1, minute=0),
+            'end': datetime.datetime(year=2016, month=1, day=11, hour=22, minute=0),
             'tdelta': 1
         },
         'game': {
@@ -87,7 +87,8 @@ def default_config():
             'no_fail_treshold': 30,
             'connections': 3,
             'start_fuel': 1000,
-            'fail_penalty': 20
+            'fail_penalty': 20,
+            'storage_per_module': 100
         },
         'module': {
             'all_perks': ['prod',  # +1 production
